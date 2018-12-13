@@ -6,7 +6,7 @@ module SendGrid
   # Initialize the HTTP client
   class API
     attr_accessor :client
-    attr_reader :request_headers, :host, :version
+    attr_reader :request_headers, :host, :version, :http_options
     # * *Args*    :
     #   - +api_key+ -> your SendGrid API key
     #   - +host+ -> the base URL for the API
@@ -14,7 +14,7 @@ module SendGrid
     #   - +version+ -> the version of the API you wish to access,
     #                  currently only "v3" is supported
     #
-    def initialize(api_key: '', host: nil, request_headers: nil, version: nil)
+    def initialize(api_key: '', host: nil, request_headers: nil, version: nil, http_options: {})
       @api_key          = api_key
       @host             = host ? host : 'https://api.sendgrid.com'
       @version          = version ? version : 'v3'
@@ -27,9 +27,11 @@ module SendGrid
         }
       ')
 
+      @http_options = http_options
       @request_headers = @request_headers.merge(request_headers) if request_headers
       @client = Client.new(host: "#{@host}/#{@version}",
-                           request_headers: @request_headers)
+                           request_headers: @request_headers,
+                           http_options: @http_options)
     end
   end
 end
